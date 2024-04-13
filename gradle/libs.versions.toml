@@ -14,6 +14,7 @@ roomCommon = "2.6.1"
 roomRuntime = "2.6.1"
 roomCompiler = "2.6.1"
 activity = "1.8.0"
+playServices = "12.0.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -30,6 +31,7 @@ room-common = { group = "androidx.room", name = "room-common", version.ref = "ro
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+play-services = { group = "com.google.android.gms", name = "play-services", version.ref = "playServices" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

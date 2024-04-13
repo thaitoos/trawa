@@ -4,4 +4,6 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="add_measurement">add measurement</string>
+    <string name="start">Start</string>
+    <string name="finish">Finish</string>
 </resources>
