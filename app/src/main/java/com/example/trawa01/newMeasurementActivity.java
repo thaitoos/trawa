@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,16 +30,27 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Calendar;
+import java.util.List;
 import java.util.Timer;
 
+import ViewModel.ActivityViewModel;
+import ViewModel.MeasurementViewModel;
+import model.ActivityEntity;
+import model.ActivityType;
 import model.MeasurementEntity;
 
 public class newMeasurementActivity extends AppCompatActivity {
     public static final String EXTRA_REPLY = "com.example.android.wordlistsql.REPLY";
     private static final int LOCATION_REQUEST_CODE = 10001;
     private FusedLocationProviderClient fusedLocationClient;
-    LocationRequest locationRequest;
+    private MeasurementViewModel measurementViewModel;
+    private ActivityViewModel activityViewModel;
+    private LocationRequest locationRequest;
     private LocationManager locationManager;
+    private ActivityEntity activity;
+    List<MeasurementEntity> measurements;
+
     TextView textView;
 
     LocationCallback locationCallback = new LocationCallback() {
@@ -48,10 +60,12 @@ public class newMeasurementActivity extends AppCompatActivity {
             if (locationResult == null) {
                 return;
             }
-            for (Location location : locationResult.getLocations()) {
-                MeasurementEntity measurement = new MeasurementEntity(location.getLatitude(), location.getLongitude(), 0, 0, 0, location.getTime(), 0);
-                textView.setText(String.valueOf(location.getLatitude()));
-            }
+            Location location = locationResult.getLastLocation();
+            MeasurementEntity measurement = new MeasurementEntity(location.getLatitude(), location.getLongitude(), location.getAltitude(),
+                    location.getSpeed(), location.getAccuracy(), location.getTime(), activity.getStartTime());
+
+            textView.setText(String.valueOf(measurement.getActivityStartTime()));
+            measurementViewModel.insert(measurement);
         }
     };
 
@@ -62,14 +76,18 @@ public class newMeasurementActivity extends AppCompatActivity {
         final Button startButton = findViewById(R.id.button_start);
         final Button finishButton = findViewById(R.id.button_finish);
         textView = findViewById(R.id.text_view);
-        Log.d("Location", "onCreate: " + "created");
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(3000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        measurementViewModel = new ViewModelProvider(this).get(MeasurementViewModel.class);
+        activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
         startButton.setOnClickListener(view -> {
             checkSettingsAndStartLocationUpdates();
+        });
+        finishButton.setOnClickListener(view -> {
+            stopLocationUpdates();
         });
     }
 
@@ -99,24 +117,30 @@ public class newMeasurementActivity extends AppCompatActivity {
 
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
+        activity = new ActivityEntity(Calendar.getInstance().getTimeInMillis());
+
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
-        Log.d("Location", "startLocationUpdates: " + "started location updates");
+
+
     }
 
     private void stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback);
+        activity = new ActivityEntity(activity.getStartTime(), Calendar.getInstance().getTimeInMillis() - activity.getStartTime(),
+                "", "", false, ActivityType.RUNNING, 2);
+        activityViewModel.insert(activity);
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        Log.d("Location", "onStart: " + "started");
+        //Log.d("Location", "onStart: " + "started");
         if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             //checkSettingsAndStartLocationUpdates();
-            Log.d("Location", "onStart: " + "COOL");
+            //Log.d("Location", "onStart: " + "COOL");
         } else {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-            Log.d("Location", "onStart: " + "NOT COOL");
+            //Log.d("Location", "onStart: " + "NOT COOL");
         }
     }
 
