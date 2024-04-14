@@ -14,7 +14,7 @@ public class MeasurementEntity {
     private long time;
     private long activityStartTime;
 
-    public MeasurementEntity(double longitude, double latitude, double altitude, float speed, float accuracy, long time, long activityStartTime) {
+    public MeasurementEntity(double latitude, double longitude, double altitude, float speed, float accuracy, long time, long activityStartTime) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.altitude = altitude;

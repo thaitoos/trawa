@@ -16,7 +16,7 @@ import dao.MeasurementDAO;
 import model.ActivityEntity;
 import model.MeasurementEntity;
 
-@Database(entities = {MeasurementEntity.class, ActivityEntity.class}, version = 3, exportSchema = false)
+@Database(entities = {MeasurementEntity.class, ActivityEntity.class}, version = 5, exportSchema = false)
 public abstract class AppRoomDatabase extends RoomDatabase {
 
     public abstract MeasurementDAO measurementDAO();
@@ -32,7 +32,8 @@ public abstract class AppRoomDatabase extends RoomDatabase {
             synchronized (AppRoomDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                        AppRoomDatabase.class, "word_database").addCallback(roomDatabaseCallback).fallbackToDestructiveMigration()
+                        AppRoomDatabase.class, "word_database").addCallback(roomDatabaseCallback)
+                            .fallbackToDestructiveMigration().allowMainThreadQueries()
                         .build();
                 }
             }

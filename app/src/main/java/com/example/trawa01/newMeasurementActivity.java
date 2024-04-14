@@ -30,6 +30,7 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
@@ -43,13 +44,15 @@ import model.MeasurementEntity;
 public class newMeasurementActivity extends AppCompatActivity {
     public static final String EXTRA_REPLY = "com.example.android.wordlistsql.REPLY";
     private static final int LOCATION_REQUEST_CODE = 10001;
+    Button startButton;
+    Button finishButton;
     private FusedLocationProviderClient fusedLocationClient;
     private MeasurementViewModel measurementViewModel;
     private ActivityViewModel activityViewModel;
     private LocationRequest locationRequest;
     private LocationManager locationManager;
     private ActivityEntity activity;
-    List<MeasurementEntity> measurements;
+    List<MeasurementEntity> measurements = new ArrayList<>();
 
     TextView textView;
 
@@ -65,6 +68,7 @@ public class newMeasurementActivity extends AppCompatActivity {
                     location.getSpeed(), location.getAccuracy(), location.getTime(), activity.getStartTime());
 
             textView.setText(String.valueOf(measurement.getActivityStartTime()));
+            measurements.add(measurement);
             measurementViewModel.insert(measurement);
         }
     };
@@ -73,8 +77,9 @@ public class newMeasurementActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_activity);
-        final Button startButton = findViewById(R.id.button_start);
-        final Button finishButton = findViewById(R.id.button_finish);
+        startButton = findViewById(R.id.button_start);
+        finishButton = findViewById(R.id.button_finish);
+        finishButton.setEnabled(false);
         textView = findViewById(R.id.text_view);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         locationRequest = LocationRequest.create();
@@ -121,14 +126,24 @@ public class newMeasurementActivity extends AppCompatActivity {
 
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
 
-
+        finishButton.setEnabled(true);
+        startButton.setEnabled(false);
     }
 
     private void stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback);
-        activity = new ActivityEntity(activity.getStartTime(), Calendar.getInstance().getTimeInMillis() - activity.getStartTime(),
-                "", "", false, ActivityType.RUNNING, 2);
+        long duration = Calendar.getInstance().getTimeInMillis() - activity.getStartTime();
+        double averageSpeed = 0;
+        for(MeasurementEntity measurement : measurements){
+            averageSpeed += measurement.getSpeed();
+        }
+        averageSpeed = averageSpeed / measurements.size();
+        double distance = averageSpeed * duration / 1000000;
+        activity = new ActivityEntity(activity.getStartTime(), duration,
+                "test name", "test desc", false, ActivityType.RUNNING, distance);
         activityViewModel.insert(activity);
+
+        finish();
     }
 
     @Override

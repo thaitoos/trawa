@@ -4,17 +4,19 @@ junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.6.1"
-material = "1.10.0"
+material = "1.11.0"
 constraintlayout = "2.1.4"
-lifecycleLivedataKtx = "2.6.1"
-lifecycleViewmodelKtx = "2.6.1"
-navigationFragment = "2.6.0"
-navigationUi = "2.6.0"
+lifecycleLivedataKtx = "2.7.0"
+lifecycleViewmodelKtx = "2.7.0"
+navigationFragment = "2.7.7"
+navigationUi = "2.7.7"
 roomCommon = "2.6.1"
 roomRuntime = "2.6.1"
 roomCompiler = "2.6.1"
-activity = "1.8.0"
-playServices = "12.0.1"
+activity = "1.8.2"
+playServicesMaps = "18.2.0"
+playServicesLocation = "21.2.0"
+playServicesMapsLicense = "12.0.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -31,7 +33,10 @@ room-common = { group = "androidx.room", name = "room-common", version.ref = "ro
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-play-services = { group = "com.google.android.gms", name = "play-services", version.ref = "playServices" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+play-services-maps-license = { group = "com.google.android.gms", name = "play-services-maps-license", version.ref = "playServicesMapsLicense" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -24,6 +24,10 @@ public class MeasurementViewModel extends AndroidViewModel {
         return allMeasurements;
     }
 
+    public List<MeasurementEntity> getMeasurementsByActivityId(long id) {
+        return repository.getMeasurementsByActivityId(id);
+    }
+
     public void insert(MeasurementEntity measurement) {
         repository.insert(measurement);
     }

@@ -24,6 +24,10 @@ public class MeasurementRepo {
         return allMeasurements;
     }
 
+    public List<MeasurementEntity> getMeasurementsByActivityId(long id) {
+        return measurementDAO.getMeasurementsByActivityId(id);
+    }
+
     public void insert(MeasurementEntity measurement) {
         AppRoomDatabase.databaseWriteExecutor.execute(() -> {
             measurementDAO.insert(measurement);

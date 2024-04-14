@@ -15,7 +15,7 @@ public interface ActivityDAO {
     @Insert
     void insert(ActivityEntity activity);
 
-    @Query("SELECT * FROM activity ORDER BY startTime")
+    @Query("SELECT * FROM activity ORDER BY startTime DESC")
     LiveData<List<ActivityEntity>> getAllActivitiesInOrder();
 
     @Update

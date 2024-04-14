@@ -17,4 +17,7 @@ public interface MeasurementDAO {
     @Query("SELECT * FROM measurement ORDER BY time")
     LiveData<List<MeasurementEntity>> getAllMeasurementsInOrder();
 
+    @Query("SELECT * FROM measurement WHERE activityStartTime = :id ORDER BY time")
+    List<MeasurementEntity> getMeasurementsByActivityId(long id);
+
 }
