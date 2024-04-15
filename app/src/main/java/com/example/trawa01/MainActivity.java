@@ -2,10 +2,7 @@ package com.example.trawa01;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,13 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.trawa01.databinding.ActivityMainBinding;
-import com.example.trawa01.ui.ViewActivityActivity;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import ViewModel.ActivityViewModel;
 import ViewModel.MeasurementViewModel;
-import model.MeasurementEntity;
 import views.ActivityAdapter;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, newMeasurementActivity.class);
-                startActivityForResult(intent, NEW_ACTIVITY_REQUEST_CODE);
+                Intent intent = new Intent(MainActivity.this, NewMeasurementActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -69,13 +64,13 @@ public class MainActivity extends AppCompatActivity {
         });*/
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    /*public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == NEW_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
 
         }
-    }
+    }*/
 
 
 
