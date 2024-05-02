@@ -68,11 +68,30 @@
             android:layout_weight="0.7"/>
 
     </LinearLayout>
-    <Button
-        android:layout_width="400px"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="right"
-        android:text="@string/route_map"
-        android:id="@+id/view_map"
-        ></Button>
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/view_details"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:text="details" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="120px"
+            android:layout_weight="0.15"
+            />
+        <Button
+            android:id="@+id/view_map"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:text="@string/route_map" />
+
+    </LinearLayout>
+
 </LinearLayout>

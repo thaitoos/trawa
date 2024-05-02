@@ -40,6 +40,7 @@ import model.MeasurementEntity;
 
 public class NewMeasurementActivity extends AppCompatActivity {
     public static final String EXTRA_REPLY = "com.example.android.wordlistsql.REPLY";
+    public static final int FINISH_REQUEST_CODE = 2;
     private final int gpsInterval = 1000;
     private double currentDistance = 0;
     private long currentDuration = 0;
@@ -82,12 +83,8 @@ public class NewMeasurementActivity extends AppCompatActivity {
             if(measurementsSinceLastRestart.size() > 5) {
                 double pace = getPace();
                 // pace is s / km
-                // output in mm:ss / km
-                paceValue.setText(String.format("%02d:%02d m/km", (int) pace / 60, (int) pace % 60));
+                paceValue.setText(String.format("%02d:%02d min/km", (int) pace / 60, (int) pace % 60));
             }
-            //long millisElapsed = Calendar.getInstance().getTimeInMillis() - activity.getStartTime();
-            // format mm:ss
-            //String time = String.format("%02d:%02d", millisElapsed / 60000, (millisElapsed % 60000) / 1000);
             timeValue.setText(String.format("%02d:%02d", currentDuration / 60000, (currentDuration % 60000) / 1000));
             measurementViewModel.insert(measurement);
         }
@@ -109,7 +106,7 @@ public class NewMeasurementActivity extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(gpsInterval);
-        locationRequest.setFastestInterval(gpsInterval);
+        locationRequest.setFastestInterval(gpsInterval); // todo
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         measurementViewModel = new ViewModelProvider(this).get(MeasurementViewModel.class);
@@ -119,7 +116,7 @@ public class NewMeasurementActivity extends AppCompatActivity {
             checkSettingsAndStartLocationUpdates();
         });
         finishButton.setOnClickListener(view -> {
-            paceValue.setText("--:-- m/km");
+            paceValue.setText("--:-- min/km");
             fusedLocationClient.removeLocationUpdates(locationCallback);
             measurementsSinceLastRestart.clear();
             stopLocationUpdates();
@@ -133,11 +130,9 @@ public class NewMeasurementActivity extends AppCompatActivity {
 
         Task<LocationSettingsResponse> locationSettingsResponseTask = client.checkLocationSettings(request);
         locationSettingsResponseTask.addOnSuccessListener(locationSettingsResponse -> {
-            Log.d("Location", "checkSettingsAndStartLocationUpdates: " + "All location settings are satisfied");
             startLocationUpdates();
         });
         locationSettingsResponseTask.addOnFailureListener(e -> {
-            Log.d("Location", "checkSettingsAndStartLocationUpdates: " + "All location settings are N OT NOT T satisfied");
             if (e instanceof ResolvableApiException) {
                 ResolvableApiException apiException = (ResolvableApiException) e;
                 try {
@@ -161,26 +156,15 @@ public class NewMeasurementActivity extends AppCompatActivity {
     }
 
     private void stopLocationUpdates() {
-        /*fusedLocationClient.removeLocationUpdates(locationCallback);
-        long duration = Calendar.getInstance().getTimeInMillis() - activity.getStartTime();
-        double averageSpeed = 0;
-        for(MeasurementEntity measurement : measurements){
-            averageSpeed += measurement.getSpeed();
-        }
-        averageSpeed = averageSpeed / measurements.size();
-        double distance = averageSpeed * duration / 1000000;
-        activity = new ActivityEntity(activity.getStartTime(), duration,
-                "test name", "test desc", false, ActivityType.RUNNING, distance);
-        activityViewModel.insert(activity);*/
         Intent intent = new Intent(NewMeasurementActivity.this, SaveActivityActivity.class);
-        startActivityForResult(intent, 2);
+        startActivityForResult(intent, FINISH_REQUEST_CODE);
 
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2 && resultCode == RESULT_OK) {
+        if (requestCode == FINISH_REQUEST_CODE && resultCode == RESULT_OK) {
 
             double distance = currentDistance;
             long duration = currentDuration;
@@ -227,6 +211,7 @@ public class NewMeasurementActivity extends AppCompatActivity {
         return pace;
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onRestart(){
         super.onRestart();
