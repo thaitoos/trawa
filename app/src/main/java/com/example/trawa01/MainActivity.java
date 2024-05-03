@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.trawa01.databinding.ActivityMainBinding;
+import com.example.trawa01.ui.ProfileActivity;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -32,13 +33,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         MapsInitializer.initialize(getApplicationContext(), MapsInitializer.Renderer.LATEST, null);
 
+        measurementViewModel = new ViewModelProvider(this).get(MeasurementViewModel.class);
+        activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
+
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        final ActivityAdapter adapter = new ActivityAdapter(new ActivityAdapter.WordDiff());
+        final ActivityAdapter adapter = new ActivityAdapter(new ActivityAdapter.WordDiff(), activityViewModel);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        measurementViewModel = new ViewModelProvider(this).get(MeasurementViewModel.class);
-        activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
 
         activityViewModel.getAllActivities().observe(this, adapter::submitList);
 
@@ -53,15 +55,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*recyclerView.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabProfile = findViewById(R.id.fabProfile);
+        fabProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("MainActivity", "onClick: " + recyclerView.getChildItemId(view));
-                recyclerView.getChildItemId(view);
-                Intent intent = new Intent(MainActivity.this, ViewActivityActivity.class);
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(intent);
             }
-        });*/
+        });
     }
 
     /*public void onActivityResult(int requestCode, int resultCode, Intent data) {

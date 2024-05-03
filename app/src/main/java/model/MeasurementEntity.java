@@ -13,8 +13,10 @@ public class MeasurementEntity {
     @PrimaryKey
     private long time;
     private long activityStartTime;
+    private float distance;
+    private long duration;
 
-    public MeasurementEntity(double latitude, double longitude, double altitude, float speed, float accuracy, long time, long activityStartTime) {
+    public MeasurementEntity(double latitude, double longitude, double altitude, float speed, float accuracy, long time, long activityStartTime, float distance, long duration) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.altitude = altitude;
@@ -22,6 +24,8 @@ public class MeasurementEntity {
         this.accuracy = accuracy;
         this.time = time;
         this.activityStartTime = activityStartTime;
+        this.distance = distance;
+        this.duration = duration;
     }
 
     public double getLongitude() {
@@ -66,7 +70,18 @@ public class MeasurementEntity {
     public void setActivityStartTime(long activityStartTime) {
         this.activityStartTime = activityStartTime;
     }
-
+    public float getDistance() {
+        return distance;
+    }
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+    public long getDuration() {
+        return duration;
+    }
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
 }
 
 

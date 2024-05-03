@@ -20,4 +20,7 @@ public interface MeasurementDAO {
     @Query("SELECT * FROM measurement WHERE activityStartTime = :id ORDER BY time")
     List<MeasurementEntity> getMeasurementsByActivityId(long id);
 
+    @Query("DELETE FROM measurement WHERE activityStartTime = :id")
+    void deleteMeasurementsByActivityId(long id);
+
 }

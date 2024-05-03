@@ -78,19 +78,22 @@
             android:id="@+id/view_details"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.3"
+            android:layout_weight="0.4"
             android:text="details" />
-        <View
-            android:layout_width="0dp"
-            android:layout_height="120px"
-            android:layout_weight="0.15"
-            />
+
         <Button
             android:id="@+id/view_map"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.3"
+            android:layout_weight="0.4"
             android:text="@string/route_map" />
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.15"
+            android:text="Del"
+            android:backgroundTint="@color/design_default_color_error" />
 
     </LinearLayout>
 

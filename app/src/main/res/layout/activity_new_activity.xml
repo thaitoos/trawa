@@ -73,6 +73,11 @@
             android:textSize="24sp"/>
     </LinearLayout>
 
+    <com.github.mikephil.charting.charts.BarChart
+        android:layout_width="match_parent"
+        android:layout_height="600px"
+        android:id="@+id/chart1"></com.github.mikephil.charting.charts.BarChart>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"

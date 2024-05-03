@@ -2,6 +2,7 @@ package dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -23,4 +24,10 @@ public interface ActivityDAO {
 
     @Query("SELECT * FROM activity WHERE startTime = :startTime")
     LiveData<ActivityEntity> getActivityByStartTime(long startTime);
+
+    @Query("DELETE FROM activity WHERE startTime = :startTime")
+    void deleteActivity(long startTime);
+
+    @Query("SELECT * FROM activity")
+    List<ActivityEntity> getAllActivitiesList();
 }

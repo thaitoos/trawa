@@ -7,16 +7,21 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import dao.ActivityDAO;
+import dao.MeasurementDAO;
 import database.AppRoomDatabase;
 import model.ActivityEntity;
+import model.MeasurementEntity;
 
 public class ActivityRepo {
     private ActivityDAO activityDAO;
+    private MeasurementDAO measurementDAO;
+
     private LiveData<List<ActivityEntity>> allActivities;
 
     public ActivityRepo(Application application) {
         AppRoomDatabase db = AppRoomDatabase.getDatabase(application);
         activityDAO = db.activityDAO();
+        measurementDAO = db.measurementDAO();
         allActivities = activityDAO.getAllActivitiesInOrder();
     }
 
@@ -34,6 +39,17 @@ public class ActivityRepo {
         AppRoomDatabase.databaseWriteExecutor.execute(() -> {
             activityDAO.update(activity);
         });
+    }
+
+    public void deleteActivity(long startTime) {
+        AppRoomDatabase.databaseWriteExecutor.execute(() -> {
+            activityDAO.deleteActivity(startTime);
+            measurementDAO.deleteMeasurementsByActivityId(startTime);
+        });
+    }
+
+    public List<ActivityEntity> getAllActivitiesList() {
+        return activityDAO.getAllActivitiesList();
     }
 
 }

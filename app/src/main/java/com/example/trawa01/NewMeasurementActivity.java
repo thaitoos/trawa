@@ -17,6 +17,13 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.trawa01.ui.SaveActivityActivity;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -31,6 +38,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import ViewModel.ActivityViewModel;
 import ViewModel.MeasurementViewModel;
@@ -51,12 +59,15 @@ public class NewMeasurementActivity extends AppCompatActivity {
     TextView paceValue;
     TextView distanceValue;
     TextView paceLabel;
+    BarChart chart1;
     private FusedLocationProviderClient fusedLocationClient;
     private MeasurementViewModel measurementViewModel;
     private ActivityViewModel activityViewModel;
     private LocationRequest locationRequest;
     private ActivityEntity activity;
     List<MeasurementEntity> measurementsSinceLastRestart = new ArrayList<>();
+    List<MeasurementEntity> allMeasurements = new ArrayList<>();
+    private boolean finished = false;
 
     LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -67,9 +78,10 @@ public class NewMeasurementActivity extends AppCompatActivity {
             }
             Location location = locationResult.getLastLocation();
             MeasurementEntity measurement = new MeasurementEntity(location.getLatitude(), location.getLongitude(), location.getAltitude(),
-                    location.getSpeed(), location.getAccuracy(), location.getTime(), activity.getStartTime());
+                    location.getSpeed(), location.getAccuracy(), location.getTime(), activity.getStartTime(), (float)currentDistance, currentDuration);
 
             measurementsSinceLastRestart.add(measurement);
+            allMeasurements.add(measurement);
 
             currentDistance += measurement.getSpeed() * gpsInterval / 1000000;
             if(measurementsSinceLastRestart.size() == 1){
@@ -87,6 +99,8 @@ public class NewMeasurementActivity extends AppCompatActivity {
             }
             timeValue.setText(String.format("%02d:%02d", currentDuration / 60000, (currentDuration % 60000) / 1000));
             measurementViewModel.insert(measurement);
+
+            updateChart();
         }
     };
 
@@ -102,6 +116,8 @@ public class NewMeasurementActivity extends AppCompatActivity {
         distanceValue = findViewById(R.id.distance_value);
         paceLabel = findViewById(R.id.pace_label);
         paceLabel.setText("Pace last minute:");
+        chart1 = findViewById(R.id.chart1);
+        chart1.setNoDataText("");
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         locationRequest = LocationRequest.create();
@@ -175,6 +191,8 @@ public class NewMeasurementActivity extends AppCompatActivity {
             activity = new ActivityEntity(activity.getStartTime(), duration,
                     name, description, false, ActivityType.RUNNING, distance);
             activityViewModel.insert(activity);
+
+            finished = true;
             finish();
         }
     }
@@ -215,7 +233,44 @@ public class NewMeasurementActivity extends AppCompatActivity {
     @Override
     public void onRestart(){
         super.onRestart();
+        if(finished){
+            return;
+        }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
+
+    private void updateChart(){
+        if(allMeasurements.size() < 3){
+            return;
+        }
+
+        int kmVisited = (int) allMeasurements.get(allMeasurements.size() - 1).getDistance()+ 1;
+        List<Long> firstTimestamp = new ArrayList<>();
+        List<Long> lastTimestamp = new ArrayList<>();
+        for(int i = 0; i < kmVisited; i++){
+            firstTimestamp.add(0L);
+            lastTimestamp.add(0L);
+        }
+
+        for(MeasurementEntity measurement : allMeasurements){
+            int km = (int) measurement.getDistance();
+            if(firstTimestamp.get(km) == 0){
+                firstTimestamp.set(km, measurement.getTime());
+            }
+            lastTimestamp.set(km, measurement.getTime());
+        }
+
+        List<BarEntry> entries = new ArrayList<>();
+        for(int i = 0; i < kmVisited; i++){
+            entries.add(new BarEntry(i, (lastTimestamp.get(i) - firstTimestamp.get(i))));
+        }
+
+        BarDataSet dataSet = new BarDataSet(entries, "Time spent on each km");
+        BarData barData = new BarData(dataSet);
+        chart1.setData(barData);
+        chart1.getAxisLeft().setAxisMinimum(0); // TODO cleanup the chart, also make scrollable
+        chart1.invalidate();
+
     }
 
 

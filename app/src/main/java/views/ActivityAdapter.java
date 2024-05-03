@@ -7,16 +7,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
+import ViewModel.ActivityViewModel;
 import model.ActivityEntity;
 
 public class ActivityAdapter extends ListAdapter<ActivityEntity, ActivityViewHolder> {
-    public ActivityAdapter(@NonNull DiffUtil.ItemCallback<ActivityEntity> diffCallback) {
+    ActivityViewModel activityViewModel;
+    public ActivityAdapter(@NonNull DiffUtil.ItemCallback<ActivityEntity> diffCallback, ActivityViewModel activityViewModel) {
         super(diffCallback);
+        this.activityViewModel = activityViewModel;
     }
 
     @Override
     public ActivityViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return ActivityViewHolder.create(parent);
+        return ActivityViewHolder.create(parent, activityViewModel);
     }
 
     @Override
