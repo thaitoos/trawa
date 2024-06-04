@@ -33,4 +33,8 @@ public class MeasurementRepo {
             measurementDAO.insert(measurement);
         });
     }
+
+    public List<MeasurementEntity> getAllMeasurementsInOrderList() {
+        return measurementDAO.getAllMeasurementsInOrderList();
+    }
 }

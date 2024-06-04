@@ -187,9 +187,10 @@ public class NewMeasurementActivity extends AppCompatActivity {
 
             String name = data.getStringExtra("name");
             String description = data.getStringExtra("description");
+            String activityType = data.getStringExtra("activityType");
 
             activity = new ActivityEntity(activity.getStartTime(), duration,
-                    name, description, false, ActivityType.RUNNING, distance);
+                    name, description, false, ActivityType.valueOf(activityType.toUpperCase()), distance);
             activityViewModel.insert(activity);
 
             finished = true;
@@ -244,7 +245,7 @@ public class NewMeasurementActivity extends AppCompatActivity {
             return;
         }
 
-        int kmVisited = (int) allMeasurements.get(allMeasurements.size() - 1).getDistance()+ 1;
+        int kmVisited = (int) allMeasurements.get(allMeasurements.size() - 1).getDistance() + 1;
         List<Long> firstTimestamp = new ArrayList<>();
         List<Long> lastTimestamp = new ArrayList<>();
         for(int i = 0; i < kmVisited; i++){

@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.trawa01.R;
@@ -18,15 +20,23 @@ import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import ViewModel.ActivityViewModel;
+import ViewModel.MeasurementViewModel;
 import model.ActivityEntity;
 import model.ActivityType;
+import model.MeasurementEntity;
 
 public class ProfileActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     private LineChart lineChart1;
     private Spinner dropdown1;
     private ActivityViewModel activityViewModel;
+    private MeasurementViewModel measurementViewModel;
+    private EditText recordInput;
+    private Button checkButton;
+    private TextView recordNameText;
+    private TextView recordTimeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +44,24 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         setContentView(R.layout.profile_activity);
 
         activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
+        measurementViewModel = new ViewModelProvider(this).get(MeasurementViewModel.class);
 
         lineChart1 = findViewById(R.id.line_chart1);
         dropdown1 = findViewById(R.id.dropdown1);
+
+        recordInput = findViewById(R.id.record_input);
+        checkButton = findViewById(R.id.check);
+        recordNameText = findViewById(R.id.record_name);
+        recordTimeText = findViewById(R.id.record_time);
+
+        checkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double distance = Double.parseDouble(recordInput.getText().toString());
+                fillRecord(distance);
+            }
+        });
+
 
         initializeDropdowns();
     }
@@ -49,7 +74,8 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         String[] allTypes = allTypesList.toArray(new String[0]);
 
         String[] movingTypes = {ActivityType.WALKING.toString()+"- distance", ActivityType.RUNNING.toString()+"- distance", ActivityType.CYCLING.toString()+"- distance"};
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, movingTypes);
+
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Stream.concat(Stream.of(allTypes), Stream.of(movingTypes)).toArray(String[]::new));
         dropdown1.setAdapter(adapter);
         dropdown1.setOnItemSelectedListener(this);
     }
@@ -111,6 +137,35 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         lineChart1.invalidate();
 
     }
+
+    private void fillRecord(double distance){
+        /*long INF = 10000000000000000L;
+        List<MeasurementEntity> measurements = measurementViewModel.getAllMeasurementsInOrderList();
+        List<List<MeasurementEntity>> measurementsByActivity = new ArrayList<>();
+        for(MeasurementEntity measurement : measurements){
+            if(measurementsByActivity.isEmpty() ||
+                    measurementsByActivity.get(measurementsByActivity.size()-1).get(0).getActivityStartTime() != measurement.getActivityStartTime()){
+                measurementsByActivity.add(new ArrayList<>());
+            }
+            measurementsByActivity.get(measurementsByActivity.size()-1).add(measurement);
+        }
+        long BestTimeMillis = INF;
+        for(List<MeasurementEntity> measurementList : measurementsByActivity){
+            long bestgetBestTime(measurementList, distance);
+        }*/
+
+    }
+
+    /*private long getBestTime(List<MeasurementEntity> measurementList, double distance){
+        double bestTime = Double.MAX_VALUE;
+        long bestTimeMillis = 0
+        for(MeasurementEntity measurement : measurementList){
+            if(measurement.getDistance() == distance && measurement.getTime() < bestTime){
+                bestTime = measurement.getTime();
+                bestTimeMillis = measurement.getTimeMillis();
+            }
+        }
+    }*/
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {

@@ -24,6 +24,10 @@ public class MeasurementViewModel extends AndroidViewModel {
         return allMeasurements;
     }
 
+    public List<MeasurementEntity> getAllMeasurementsInOrderList() {
+        return repository.getAllMeasurementsInOrderList();
+    }
+
     public List<MeasurementEntity> getMeasurementsByActivityId(long id) {
         return repository.getMeasurementsByActivityId(id);
     }
@@ -31,4 +35,5 @@ public class MeasurementViewModel extends AndroidViewModel {
     public void insert(MeasurementEntity measurement) {
         repository.insert(measurement);
     }
+
 }
