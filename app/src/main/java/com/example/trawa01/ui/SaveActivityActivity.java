@@ -1,9 +1,11 @@
 package com.example.trawa01.ui;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,13 +21,19 @@ import androidx.core.content.ContextCompat;
 
 import com.example.trawa01.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import model.ActivityType;
 
 public class SaveActivityActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CAMERA_PERMISSION = 2;
+    private static final int REQUEST_STORAGE_PERMISSION = 3;
     Bitmap lastImage;
+    String PhotoPath;
 
     EditText nameEditText;
     EditText descriptionEditText;
@@ -58,7 +66,7 @@ public class SaveActivityActivity extends AppCompatActivity {
             replyIntent.putExtra("name", nameEditText.getText().toString());
             replyIntent.putExtra("description", descriptionEditText.getText().toString());
             replyIntent.putExtra("activityType", ((ActivityType) activityTypeSpinner.getSelectedItem()).toString());
-            replyIntent.putExtra("photo", lastImage);
+            replyIntent.putExtra("photoPath", PhotoPath);
             setResult(RESULT_OK, replyIntent);
             finish();
         });
@@ -68,8 +76,8 @@ public class SaveActivityActivity extends AppCompatActivity {
         activityTypeSpinner.setAdapter(adapter);
 
         takePhotoButton.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
             } else {
                 dispatchTakePictureIntent();
             }
@@ -85,6 +93,12 @@ public class SaveActivityActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
             }
+        } else if (requestCode == REQUEST_STORAGE_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                saveImageToExternalStorage(lastImage);
+            } else {
+                Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -92,10 +106,19 @@ public class SaveActivityActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            if(data == null){
+                return;
+            }
             Bundle extras = data.getExtras();
-            if (extras != null) {
-                photoImageView.setImageBitmap((android.graphics.Bitmap) extras.get("data"));
-                lastImage = (android.graphics.Bitmap) extras.get("data");
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            lastImage = imageBitmap;
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
+            } else {
+                if(saveImageToExternalStorage(lastImage)){
+                    photoImageView.setImageBitmap(imageBitmap);
+                }
             }
         }
     }
@@ -106,6 +129,47 @@ public class SaveActivityActivity extends AppCompatActivity {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         } else {
             Toast.makeText(this, "No camera app available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean saveImageToExternalStorage(Bitmap bitmap) {
+        if (bitmap == null) {
+            Toast.makeText(this, "No image to save", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        /*File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Trawa");
+        if (!storageDir.exists()) {
+            if (!storageDir.mkdirs()) {
+                Toast.makeText(this, "Failed to create directory", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }*/
+        // do this using MediaStore
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+        /*String fileName = "IMG_" + System.currentTimeMillis() + ".jpg";
+        File imageFile = new File(storageDir, fileName);
+
+        try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            Toast.makeText(this, "Image saved: " + imageFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
+        }*/
+        // is this necessary for earlier versions of Android?
+
+        String fileName = "IMG_" + System.currentTimeMillis() + ".jpg";
+        try {
+            MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, fileName, "Trawa image");
+            //Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
+            PhotoPath = storageDir + "/" + fileName;
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
+            return false;
         }
     }
 }

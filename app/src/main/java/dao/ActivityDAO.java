@@ -23,11 +23,12 @@ public interface ActivityDAO {
     void update(ActivityEntity activity);
 
     @Query("SELECT * FROM activity WHERE startTime = :startTime")
-    LiveData<ActivityEntity> getActivityByStartTime(long startTime);
+    ActivityEntity getActivityByStartTime(long startTime);
 
     @Query("DELETE FROM activity WHERE startTime = :startTime")
     void deleteActivity(long startTime);
 
     @Query("SELECT * FROM activity")
     List<ActivityEntity> getAllActivitiesList();
+
 }

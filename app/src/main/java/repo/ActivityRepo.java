@@ -52,4 +52,8 @@ public class ActivityRepo {
         return activityDAO.getAllActivitiesList();
     }
 
+    public ActivityEntity getActivityById(long startTime) {
+        return activityDAO.getActivityByStartTime(startTime);
+    }
+
 }

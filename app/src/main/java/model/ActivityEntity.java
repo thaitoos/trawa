@@ -15,10 +15,11 @@ public class ActivityEntity {
     private boolean isStationary;
     private ActivityType type;
     private double distance;
+    private String PhotoPath;
 
     public ActivityEntity(long startTime,long duration,
                           String name, String description, boolean isStationary,
-                          ActivityType type, double distance) {
+                          ActivityType type, double distance, String PhotoPath) {
         this.startTime = startTime;
         this.duration = duration;
         this.name = name;
@@ -26,6 +27,7 @@ public class ActivityEntity {
         this.isStationary = isStationary;
         this.type = type;
         this.distance = distance;
+        this.PhotoPath = PhotoPath;
     }
 
     @Ignore
@@ -75,14 +77,11 @@ public class ActivityEntity {
     public void setDistance(double distance) {
         this.distance = distance;
     }
-
-    public void fillInData(long duration, String name, String description, boolean isStationary, ActivityType type, double distance){
-        this.duration = duration;
-        this.name = name;
-        this.description = description;
-        this.isStationary = isStationary;
-        this.type = type;
-        this.distance = distance;
+    public String getPhotoPath() {
+        return PhotoPath;
+    }
+    public void setPhotoPath(String photoPath) {
+        PhotoPath = photoPath;
     }
 
 

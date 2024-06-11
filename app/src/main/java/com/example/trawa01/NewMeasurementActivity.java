@@ -188,9 +188,10 @@ public class NewMeasurementActivity extends AppCompatActivity {
             String name = data.getStringExtra("name");
             String description = data.getStringExtra("description");
             String activityType = data.getStringExtra("activityType");
+            String PhotoPath = data.getStringExtra("photoPath");
 
             activity = new ActivityEntity(activity.getStartTime(), duration,
-                    name, description, false, ActivityType.valueOf(activityType.toUpperCase()), distance);
+                    name, description, false, ActivityType.valueOf(activityType.toUpperCase()), distance, PhotoPath);
             activityViewModel.insert(activity);
 
             finished = true;

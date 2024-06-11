@@ -3,37 +3,49 @@ package com.example.trawa01.ui;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.trawa01.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import ViewModel.ActivityViewModel;
 import ViewModel.MeasurementViewModel;
+import model.ActivityEntity;
 import model.MeasurementEntity;
 
 public class ViewActivityDetailsActivity extends AppCompatActivity {
+    private static final int REQUEST_IMAGE_OPEN = 1;
     private ActivityViewModel activityViewModel;
     private MeasurementViewModel measurementViewModel;
     private long id;
     private LineChart chart1;
     private LineChart chart2;
+    private ImageView imageView;
     private final int MAX_POINTS = 50;
     List<MeasurementEntity> measurements;
+    ActivityEntity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +53,20 @@ public class ViewActivityDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         measurementViewModel = new ViewModelProvider(this).get(MeasurementViewModel.class);
+        activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
 
         Intent intent = getIntent();
         id = intent.getLongExtra("id", 0);
 
         chart1 = findViewById(R.id.lineChart1);
         chart2 = findViewById(R.id.lineChart2);
+        imageView = findViewById(R.id.imageView);
 
         measurements = measurementViewModel.getMeasurementsByActivityId(id);
+        activity = activityViewModel.getActivityById(id);
 
         fillLineCharts();
+        setPhoto();
     }
 
     class MySpeedValueFormatter extends ValueFormatter {
@@ -69,6 +85,31 @@ public class ViewActivityDetailsActivity extends AppCompatActivity {
             else {
                 return String.format("%.2f km/h", value);
             }
+        }
+    }
+
+    private void setPhoto(){
+        if(activity.getPhotoPath() != null){
+            verifyStoragePermissions(this);
+            File imgFile = new File(activity.getPhotoPath());
+            if(imgFile.exists()){
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                imageView.setImageBitmap(myBitmap);
+            }
+        }
+    }
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.MANAGE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE},
+                    REQUEST_IMAGE_OPEN
+            );
         }
     }
 
@@ -91,7 +132,7 @@ public class ViewActivityDetailsActivity extends AppCompatActivity {
         }
     }
 
-    void fillLineCharts(){
+    private void fillLineCharts(){
         List<Entry> speedEntries = new ArrayList<>();
         List<Entry> altitudeEntries = new ArrayList<>();
 //        for(int i = 0; i < min(50, measurements.size()); i++){
@@ -125,7 +166,6 @@ public class ViewActivityDetailsActivity extends AppCompatActivity {
         chart2.getXAxis().setValueFormatter(new MyAltitudeValueFormatter());
         chart2.getAxisLeft().setValueFormatter(new MyAltitudeValueFormatter());
         chart2.invalidate();
-
-
     }
+
 }

@@ -36,4 +36,8 @@ public class ActivityViewModel extends AndroidViewModel {
     public void deleteActivity(long startTime) {
         repository.deleteActivity(startTime);
     }
+
+    public ActivityEntity getActivityById(long startTime) {
+        return repository.getActivityById(startTime);
+    }
 }
