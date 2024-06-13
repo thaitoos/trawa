@@ -47,7 +47,6 @@ import model.ActivityType;
 import model.MeasurementEntity;
 
 public class NewMeasurementActivity extends AppCompatActivity {
-    public static final String EXTRA_REPLY = "com.example.android.wordlistsql.REPLY";
     public static final int FINISH_REQUEST_CODE = 2;
     private final int gpsInterval = 1000;
     private double currentDistance = 0;

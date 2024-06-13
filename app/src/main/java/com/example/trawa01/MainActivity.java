@@ -63,6 +63,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        FloatingActionButton fabBluetooth = findViewById(R.id.fabBluetooth);
+
+        fabBluetooth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, BluetoothActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /*public void onActivityResult(int requestCode, int resultCode, Intent data) {
