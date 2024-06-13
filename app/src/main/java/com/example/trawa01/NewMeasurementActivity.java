@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
@@ -33,6 +34,7 @@ import com.google.android.gms.location.Priority;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -176,15 +178,24 @@ public class NewMeasurementActivity extends AppCompatActivity {
             String name = data.getStringExtra("name");
             String description = data.getStringExtra("description");
             String activityType = data.getStringExtra("activityType");
-            String PhotoPath = data.getStringExtra("photoPath");
+            Bitmap photo = null;
+            if(data.getParcelableExtra("photo") != null){
+                photo = data.getParcelableExtra("photo");
+            }
 
             activity = new ActivityEntity(activity.getStartTime(), duration,
-                    name, description, false, ActivityType.valueOf(activityType.toUpperCase()), distance, PhotoPath);
+                    name, description, false, ActivityType.valueOf(activityType.toUpperCase()), distance, photo != null ? bitmapToByteArray(photo) : null);
             activityViewModel.insert(activity);
 
             finished = true;
             finish();
         }
+    }
+
+    private byte[] bitmapToByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
     }
 
     @Override

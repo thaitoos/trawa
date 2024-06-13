@@ -113,9 +113,6 @@ public class BluetoothActivity extends AppCompatActivity {
 
                 receivedData = new BluetoothData(readMessage);
 
-                // make toast
-                Toast.makeText(this, "Received data", Toast.LENGTH_SHORT).show();
-
                 if(!goesFirst) {
                     connectedThread.write(localData.toString().getBytes());
                 }

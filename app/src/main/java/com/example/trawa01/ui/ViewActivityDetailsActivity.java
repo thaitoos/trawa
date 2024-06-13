@@ -86,13 +86,14 @@ public class ViewActivityDetailsActivity extends AppCompatActivity {
     }
 
     private void setPhoto(){
-        if(activity.getPhotoPath() != null){
-            verifyStoragePermissions(this);
+        if(activity.getPhoto() != null){
+            /*verifyStoragePermissions(this);
             File imgFile = new File(activity.getPhotoPath());
             if(imgFile.exists()){
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 imageView.setImageBitmap(myBitmap);
-            }
+            }*/
+            imageView.setImageBitmap(BitmapFactory.decodeByteArray(activity.getPhoto(), 0, activity.getPhoto().length));
         }
     }
 

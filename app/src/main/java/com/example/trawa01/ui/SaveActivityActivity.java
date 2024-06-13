@@ -32,7 +32,6 @@ public class SaveActivityActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 2;
     private static final int REQUEST_STORAGE_PERMISSION = 3;
     Bitmap lastImage;
-    String PhotoPath;
 
     EditText nameEditText;
     EditText descriptionEditText;
@@ -65,7 +64,8 @@ public class SaveActivityActivity extends AppCompatActivity {
             replyIntent.putExtra("name", nameEditText.getText().toString());
             replyIntent.putExtra("description", descriptionEditText.getText().toString());
             replyIntent.putExtra("activityType", ((ActivityType) activityTypeSpinner.getSelectedItem()).toString());
-            replyIntent.putExtra("photoPath", PhotoPath);
+            if(lastImage != null)
+                replyIntent.putExtra("photo", lastImage);
             setResult(RESULT_OK, replyIntent);
             finish();
         });
@@ -92,12 +92,6 @@ public class SaveActivityActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == REQUEST_STORAGE_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                saveImageToExternalStorage(lastImage);
-            } else {
-                Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -111,14 +105,7 @@ public class SaveActivityActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             lastImage = imageBitmap;
-
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
-            } else {
-                if(saveImageToExternalStorage(lastImage)){
-                    photoImageView.setImageBitmap(imageBitmap);
-                }
-            }
+            photoImageView.setImageBitmap(imageBitmap);
         }
     }
 
@@ -128,25 +115,6 @@ public class SaveActivityActivity extends AppCompatActivity {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         } else {
             Toast.makeText(this, "No camera app available", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private boolean saveImageToExternalStorage(Bitmap bitmap) {
-        if (bitmap == null) {
-            Toast.makeText(this, "No image to save", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-
-        String fileName = "IMG_" + System.currentTimeMillis() + ".jpg";
-        try {
-            MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, fileName, "Trawa image");
-            PhotoPath = storageDir + "/" + fileName;
-            return true;
-        } catch (Exception e) {
-            Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
-            return false;
         }
     }
 }

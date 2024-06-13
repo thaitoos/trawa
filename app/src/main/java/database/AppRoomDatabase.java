@@ -16,7 +16,7 @@ import dao.MeasurementDAO;
 import model.ActivityEntity;
 import model.MeasurementEntity;
 
-@Database(entities = {MeasurementEntity.class, ActivityEntity.class}, version = 7, exportSchema = false)
+@Database(entities = {MeasurementEntity.class, ActivityEntity.class}, version = 8, exportSchema = false)
 public abstract class AppRoomDatabase extends RoomDatabase {
 
     public abstract MeasurementDAO measurementDAO();

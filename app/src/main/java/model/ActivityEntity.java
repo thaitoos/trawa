@@ -1,5 +1,6 @@
 package model;
 
+
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -14,11 +15,11 @@ public class ActivityEntity {
     private boolean isStationary;
     private ActivityType type;
     private double distance;
-    private String PhotoPath;
+    private byte[] photo;
 
     public ActivityEntity(long startTime,long duration,
                           String name, String description, boolean isStationary,
-                          ActivityType type, double distance, String PhotoPath) {
+                          ActivityType type, double distance, byte[] photo) {
         this.startTime = startTime;
         this.duration = duration;
         this.name = name;
@@ -26,7 +27,7 @@ public class ActivityEntity {
         this.isStationary = isStationary;
         this.type = type;
         this.distance = distance;
-        this.PhotoPath = PhotoPath;
+        this.photo = photo;
     }
 
     @Ignore
@@ -76,11 +77,11 @@ public class ActivityEntity {
     public void setDistance(double distance) {
         this.distance = distance;
     }
-    public String getPhotoPath() {
-        return PhotoPath;
+    public byte[] getPhoto() {
+        return photo;
     }
-    public void setPhotoPath(String photoPath) {
-        PhotoPath = photoPath;
+    public void setPhotoPath(byte[] photo) {
+        this.photo = photo;
     }
 
 
