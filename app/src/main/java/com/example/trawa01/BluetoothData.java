@@ -7,20 +7,26 @@ public class BluetoothData implements Serializable {
     private int DistanceCycling;
     private int DistanceWalking;
     private int TimeStationary;
+    private long totalMeters;
+    private long totalMillis;
 
-    public BluetoothData(int DistanceRunning, int DistanceCycling, int DistanceWalking, int TimeStationary) {
+    public BluetoothData(int DistanceRunning, int DistanceCycling, int DistanceWalking, int TimeStationary, int totalMeters, int totalMillis) {
         this.DistanceRunning = DistanceRunning;
         this.DistanceCycling = DistanceCycling;
         this.DistanceWalking = DistanceWalking;
         this.TimeStationary = TimeStationary;
+        this.totalMeters = totalMeters;
+        this.totalMillis = totalMillis;
     }
 
     public BluetoothData(String data) {
-        String[] splitData = data.split(",");
-        this.DistanceRunning = Integer.parseInt(splitData[0]);
-        this.DistanceCycling = Integer.parseInt(splitData[1]);
-        this.DistanceWalking = Integer.parseInt(splitData[2]);
-        this.TimeStationary = Integer.parseInt(splitData[3]);
+        String[] split = data.split(",");
+        this.DistanceRunning = Integer.parseInt(split[0]);
+        this.DistanceCycling = Integer.parseInt(split[1]);
+        this.DistanceWalking = Integer.parseInt(split[2]);
+        this.TimeStationary = Integer.parseInt(split[3]);
+        this.totalMeters = Integer.parseInt(split[4]);
+        this.totalMillis = Integer.parseInt(split[5]);
     }
 
     public int getDistanceRunning() {
@@ -55,9 +61,25 @@ public class BluetoothData implements Serializable {
         TimeStationary = timeStationary;
     }
 
+    public long getTotalMeters() {
+        return totalMeters;
+    }
+
+    public void setTotalMeters(long totalMeters) {
+        this.totalMeters = totalMeters;
+    }
+
+    public long getTotalMillis() {
+        return totalMillis;
+    }
+
+    public void setTotalMillis(long totalMillis) {
+        this.totalMillis = totalMillis;
+    }
+
     @Override
     public String toString() {
-        return DistanceRunning + "," + DistanceCycling + "," + DistanceWalking + "," + TimeStationary;
+        return DistanceRunning + "," + DistanceCycling + "," + DistanceWalking + "," + TimeStationary + "," + totalMeters + "," + totalMillis;
     }
 
 }

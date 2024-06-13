@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -47,6 +48,11 @@ public class BluetoothActivity extends AppCompatActivity {
     private static final int MESSAGE_READ = 6;
     private Handler handler;
 
+    private TextView textView1;
+    private TextView textView2;
+    private TextView textView3;
+    private TextView textView4;
+    private TextView textView5;
     private ListView pairingListView;
     private BluetoothAdapter bluetoothAdapter;
     private final List<BluetoothDevice> deviceList = new ArrayList<>();
@@ -57,6 +63,12 @@ public class BluetoothActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth);
         pairingListView = findViewById(R.id.pairingListView);
+        textView1 = findViewById(R.id.textView1);
+        textView2 = findViewById(R.id.textView2);
+        textView3 = findViewById(R.id.textView3);
+        textView4 = findViewById(R.id.textView4);
+        textView5 = findViewById(R.id.textView5);
+
         /*if (checkSelfPermission(Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
                 checkSelfPermission(Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN}, REQUEST_BLUETOOTH);
@@ -116,6 +128,8 @@ public class BluetoothActivity extends AppCompatActivity {
                 if(!goesFirst) {
                     connectedThread.write(localData.toString().getBytes());
                 }
+
+                createVisualisation();
             }
             return true;
         });
@@ -214,7 +228,7 @@ public class BluetoothActivity extends AppCompatActivity {
                 socket = device.createRfcommSocketToServiceRecord(MY_UUID);
                 socket.connect();
                 runOnUiThread(() -> showError("Connected to " + device.getName()));
-                unregisterReceiver(receiver);
+                //unregisterReceiver(receiver);
                 connectedThread = new ConnectedThread(socket, handler);
                 connectedThread.start();
                 //connectedThread.write("Hello".getBytes());
@@ -236,7 +250,7 @@ public class BluetoothActivity extends AppCompatActivity {
                         runOnUiThread(() -> showError("A device connected"));
                         // Handle the connection in a separate thread
                         serverSocket.close();
-                        unregisterReceiver(receiver);
+                        //unregisterReceiver(receiver);
                         connectedThread = new ConnectedThread(socket, handler);
                         connectedThread.start();
                         goesFirst = true;
@@ -254,22 +268,38 @@ public class BluetoothActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
+
     }
 
     private void initializeData() {
         ActivityViewModel activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
         List<ActivityEntity> activities = activityViewModel.getAllActivitiesList();
-        localData = new BluetoothData(0, 0, 0, 0);
+        localData = new BluetoothData(0, 0, 0, 0, 0, 0);
         for(ActivityEntity activity : activities) {
             if(activity.getType().equals(ActivityType.CYCLING)){
-                localData.setDistanceCycling(localData.getDistanceCycling() + (int)activity.getDistance());
+                localData.setDistanceCycling(localData.getDistanceCycling() + (int)(1000*activity.getDistance()));
             } else if(activity.getType().equals(ActivityType.RUNNING)){
-                localData.setDistanceRunning(localData.getDistanceRunning() + (int)activity.getDistance());
+                localData.setDistanceRunning(localData.getDistanceRunning() + (int)(1000*activity.getDistance()));
             } else if(activity.getType().equals(ActivityType.WALKING)){
-                localData.setDistanceWalking(localData.getDistanceWalking() + (int)activity.getDistance());
+                localData.setDistanceWalking(localData.getDistanceWalking() + (int)(1000*activity.getDistance()));
             } else if(activity.getType().equals(ActivityType.STATIONARY)){
                 localData.setTimeStationary(localData.getTimeStationary() + (int)activity.getDuration());
             }
+            localData.setTotalMeters(localData.getTotalMeters() + (int)(1000*activity.getDistance()));
+            localData.setTotalMillis(localData.getTotalMillis() + (int)activity.getDuration());
         }
+    }
+
+    private void createVisualisation() {
+        pairingListView.setVisibility(ListView.GONE);
+        textView1.setText(String.format("You have ran %d meters and they have ran %d meters", localData.getDistanceRunning(), receivedData.getDistanceRunning()));
+        textView2.setText(String.format("You have cycled %d meters and they have cycled %d meters", localData.getDistanceCycling(), receivedData.getDistanceCycling()));
+        textView3.setText(String.format("You have walked %d meters and they have walked %d meters", localData.getDistanceWalking(), receivedData.getDistanceWalking()));
+        textView4.setText(String.format("You did stationary activities for %d minutes and they did for %d minutes", localData.getTimeStationary() / 60000, receivedData.getTimeStationary() / 60000));
+        String CompareTime = localData.getTotalMillis() > receivedData.getTotalMillis() ? "more" : "less";
+        String CompareDistance = localData.getTotalMeters() > receivedData.getTotalMeters() ? "more" : "less";
+        long timeDifference = Math.abs(localData.getTotalMillis() - receivedData.getTotalMillis()) / 60000;
+        long distanceDifference = Math.abs(localData.getTotalMeters() - receivedData.getTotalMeters());
+        textView5.setText(String.format("Together, You have been active for %d %s minutes  and traveled %d %s meters than they have", timeDifference, CompareTime, distanceDifference, CompareDistance));
     }
 }
