@@ -114,6 +114,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         LineDataSet dataSet = new LineDataSet(entries, activity);
         LineData lineData = new LineData(dataSet);
         lineChart1.setData(lineData);
+        lineChart1.getDescription().setText("Last 12 months");
         lineChart1.invalidate();
 
     }

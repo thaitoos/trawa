@@ -270,6 +270,7 @@ public class NewMeasurementActivity extends AppCompatActivity {
         BarData barData = new BarData(dataSet);
         chart1.setData(barData);
         chart1.getAxisLeft().setAxisMinimum(0); // TODO cleanup the chart, also make scrollable
+        chart1.getDescription().setText("");
         chart1.invalidate();
 
     }
