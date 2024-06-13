@@ -1,6 +1,5 @@
 package views;
 
-import android.icu.number.Precision;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -17,8 +16,9 @@ public class ActivityAdapter extends ListAdapter<ActivityEntity, ActivityViewHol
         this.activityViewModel = activityViewModel;
     }
 
+    @NonNull
     @Override
-    public ActivityViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ActivityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return ActivityViewHolder.create(parent, activityViewModel);
     }
 
@@ -26,7 +26,7 @@ public class ActivityAdapter extends ListAdapter<ActivityEntity, ActivityViewHol
     public void onBindViewHolder(ActivityViewHolder holder, int position) {
         ActivityEntity current = getItem(position);
         long seconds = current.getDuration() / 1000;
-        holder.bind(String.valueOf(current.getName()), String.valueOf( round (current.getDistance(), 2)) + " km",
+        holder.bind(String.valueOf(current.getName()), round(current.getDistance(), 2) + " km",
                 String.format("%02dm:%02ds", seconds / 60, seconds % 60),
                 current.getStartTime());
     }

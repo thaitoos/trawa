@@ -11,8 +11,8 @@ import database.AppRoomDatabase;
 import model.MeasurementEntity;
 
 public class MeasurementRepo {
-    private MeasurementDAO measurementDAO;
-    private LiveData<List<MeasurementEntity>> allMeasurements;
+    private final MeasurementDAO measurementDAO;
+    private final LiveData<List<MeasurementEntity>> allMeasurements;
 
     public MeasurementRepo(Application application) {
         AppRoomDatabase db = AppRoomDatabase.getDatabase(application);
@@ -29,9 +29,7 @@ public class MeasurementRepo {
     }
 
     public void insert(MeasurementEntity measurement) {
-        AppRoomDatabase.databaseWriteExecutor.execute(() -> {
-            measurementDAO.insert(measurement);
-        });
+        AppRoomDatabase.databaseWriteExecutor.execute(() -> measurementDAO.insert(measurement));
     }
 
     public List<MeasurementEntity> getAllMeasurementsInOrderList() {

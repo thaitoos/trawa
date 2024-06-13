@@ -4,10 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,10 +20,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import ViewModel.ActivityViewModel;
-import ViewModel.MeasurementViewModel;
 import model.ActivityEntity;
 import model.ActivityType;
-import model.MeasurementEntity;
 
 public class ProfileActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     private LineChart lineChart1;
@@ -53,7 +48,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         }
         String[] allTypes = allTypesList.toArray(new String[0]);
 
-        String[] movingTypes = {ActivityType.WALKING.toString()+"- distance", ActivityType.RUNNING.toString()+"- distance", ActivityType.CYCLING.toString()+"- distance"};
+        String[] movingTypes = {ActivityType.WALKING +"- distance", ActivityType.RUNNING +"- distance", ActivityType.CYCLING +"- distance"};
 
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, Stream.concat(Stream.of(allTypes), Stream.of(movingTypes)).toArray(String[]::new));
         dropdown1.setAdapter(adapter);

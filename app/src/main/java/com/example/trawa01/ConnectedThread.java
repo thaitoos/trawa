@@ -69,7 +69,6 @@ public class ConnectedThread extends Thread {
     public void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
-            System.out.println(bytes);
             // Share the sent message with the UI activity.
             Message writtenMsg = handler.obtainMessage(
                     MESSAGE_WRITE, -1, -1, mmBuffer);
@@ -88,7 +87,6 @@ public class ConnectedThread extends Thread {
         }
     }
 
-    // Call this method from the main activity to shut down the connection.
     public void cancel() {
         try {
             mmSocket.close();

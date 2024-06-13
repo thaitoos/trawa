@@ -69,11 +69,6 @@ public class BluetoothActivity extends AppCompatActivity {
         textView4 = findViewById(R.id.textView4);
         textView5 = findViewById(R.id.textView5);
 
-        /*if (checkSelfPermission(Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
-                checkSelfPermission(Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN}, REQUEST_BLUETOOTH);
-        }*/
-
         if (checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
                 checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED ||
                 checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
@@ -93,27 +88,21 @@ public class BluetoothActivity extends AppCompatActivity {
 
         initializeBluetooth();
 
-        // Initialize the list view and adapter
         deviceListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         pairingListView.setAdapter(deviceListAdapter);
 
-        // make this device discoverable
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         startActivity(discoverableIntent);
 
-        // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(receiver, filter);
 
-        // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(receiver, filter);
 
         pairingListView.setOnItemClickListener((parent, view, position, id) -> {
-            // Handle device selection
             BluetoothDevice device = deviceList.get(position);
-            // Connect to the selected device
             connectToDevice(device);
         });
 
@@ -121,9 +110,11 @@ public class BluetoothActivity extends AppCompatActivity {
             if (message.what == MESSAGE_READ) {
                 byte[] readBuf = (byte[]) message.obj;
                 String readMessage = new String(readBuf, 0, message.arg1);
-                Toast.makeText(this, "Received: " + readMessage, Toast.LENGTH_SHORT).show();
 
                 receivedData = new BluetoothData(readMessage);
+
+                // make toast
+                Toast.makeText(this, "Received data", Toast.LENGTH_SHORT).show();
 
                 if(!goesFirst) {
                     connectedThread.write(localData.toString().getBytes());
@@ -149,17 +140,14 @@ public class BluetoothActivity extends AppCompatActivity {
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH);
                 }
             } else {
-                // Handle the case where the device doesn't support Bluetooth
                 showError("Bluetooth is not supported on this device.");
             }
         } else {
-            // Handle the case where BluetoothManager is not available
             showError("BluetoothManager is not available.");
         }
     }
 
     private void showError(String message) {
-        // Implement a method to show the error to the user, such as a Toast or a dialog
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
@@ -228,11 +216,8 @@ public class BluetoothActivity extends AppCompatActivity {
                 socket = device.createRfcommSocketToServiceRecord(MY_UUID);
                 socket.connect();
                 runOnUiThread(() -> showError("Connected to " + device.getName()));
-                //unregisterReceiver(receiver);
                 connectedThread = new ConnectedThread(socket, handler);
                 connectedThread.start();
-                //connectedThread.write("Hello".getBytes());
-                // Now you can manage the connection in a separate thread
             } catch (IOException e) {
                 runOnUiThread(() -> showError("Failed to connect to " + device.getName()));
             }
@@ -248,13 +233,11 @@ public class BluetoothActivity extends AppCompatActivity {
                     socket = serverSocket.accept();
                     if (socket != null) {
                         runOnUiThread(() -> showError("A device connected"));
-                        // Handle the connection in a separate thread
-                        serverSocket.close();
-                        //unregisterReceiver(receiver);
                         connectedThread = new ConnectedThread(socket, handler);
                         connectedThread.start();
                         goesFirst = true;
                         connectedThread.write(localData.toString().getBytes());
+                        serverSocket.close();
                         break;
                     }
                 }
@@ -268,7 +251,8 @@ public class BluetoothActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
-
+        if(connectedThread != null)
+            connectedThread.cancel();
     }
 
     private void initializeData() {

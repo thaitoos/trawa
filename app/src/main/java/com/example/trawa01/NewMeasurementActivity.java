@@ -21,9 +21,6 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -32,13 +29,13 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import ViewModel.ActivityViewModel;
 import ViewModel.MeasurementViewModel;
@@ -72,9 +69,6 @@ public class NewMeasurementActivity extends AppCompatActivity {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             Log.d("Location", "Location received: " + locationResult.toString());
-            if (locationResult == null) {
-                return;
-            }
             Location location = locationResult.getLastLocation();
             MeasurementEntity measurement = new MeasurementEntity(location.getLatitude(), location.getLongitude(), location.getAltitude(),
                     location.getSpeed(), location.getAccuracy(), location.getTime(), activity.getStartTime(), (float)currentDistance, currentDuration);
@@ -90,7 +84,7 @@ public class NewMeasurementActivity extends AppCompatActivity {
                 currentDuration += location.getTime() - measurementsSinceLastRestart.get(measurementsSinceLastRestart.size() - 2).getTime();
             }
 
-            distanceValue.setText(String.format("%.2f", currentDistance) + " km");
+            distanceValue.setText(String.format("%.2f km", currentDistance));
             if(measurementsSinceLastRestart.size() > 5) {
                 double pace = getPace();
                 // pace is s / km
@@ -120,16 +114,13 @@ public class NewMeasurementActivity extends AppCompatActivity {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         locationRequest = LocationRequest.create();
-        locationRequest.setInterval(gpsInterval);
-        locationRequest.setFastestInterval(gpsInterval); // todo
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, gpsInterval)
+                .build();
 
         measurementViewModel = new ViewModelProvider(this).get(MeasurementViewModel.class);
         activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
 
-        startButton.setOnClickListener(view -> {
-            checkSettingsAndStartLocationUpdates();
-        });
+        startButton.setOnClickListener(view -> checkSettingsAndStartLocationUpdates());
         finishButton.setOnClickListener(view -> {
             paceValue.setText("--:-- min/km");
             fusedLocationClient.removeLocationUpdates(locationCallback);
@@ -144,9 +135,7 @@ public class NewMeasurementActivity extends AppCompatActivity {
         SettingsClient client = LocationServices.getSettingsClient(this);
 
         Task<LocationSettingsResponse> locationSettingsResponseTask = client.checkLocationSettings(request);
-        locationSettingsResponseTask.addOnSuccessListener(locationSettingsResponse -> {
-            startLocationUpdates();
-        });
+        locationSettingsResponseTask.addOnSuccessListener(locationSettingsResponse -> startLocationUpdates());
         locationSettingsResponseTask.addOnFailureListener(e -> {
             if (e instanceof ResolvableApiException) {
                 ResolvableApiException apiException = (ResolvableApiException) e;
@@ -201,33 +190,18 @@ public class NewMeasurementActivity extends AppCompatActivity {
     @Override
     public void onStart(){
         super.onStart();
-        //Log.d("Location", "onStart: " + "started");
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            //checkSettingsAndStartLocationUpdates();
-        } else {
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         }
     }
 
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == LOCATION_REQUEST_CODE){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                checkSettingsAndStartLocationUpdates();
-            }
-        }
-    }*/
-
     private double getPace(){
-        double pace = 0;
         int secondsToCheck = Math.min(60, measurementsSinceLastRestart.size());
         double distance = 0;
         for(int i = 0; i < secondsToCheck; i++){
             distance += measurementsSinceLastRestart.get(measurementsSinceLastRestart.size() - i - 1).getSpeed() * gpsInterval / 1000000;
         }
-        pace = secondsToCheck / distance; //
-        return pace;
+        return (secondsToCheck / distance);
     }
 
     @SuppressLint("MissingPermission")

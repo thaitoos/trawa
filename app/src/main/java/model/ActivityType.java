@@ -1,5 +1,7 @@
 package model;
 
+import androidx.annotation.NonNull;
+
 public enum ActivityType {
     WALKING("Walking"),
     RUNNING("Running"),
@@ -12,7 +14,9 @@ public enum ActivityType {
         this.name = name;
     }
 
-    @Override public String toString() {
+    @NonNull
+    @Override
+    public String toString() {
         return name;
     }
 }

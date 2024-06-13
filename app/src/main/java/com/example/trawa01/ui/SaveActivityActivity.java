@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -22,8 +23,6 @@ import androidx.core.content.ContextCompat;
 import com.example.trawa01.R;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import model.ActivityType;
 
@@ -85,7 +84,7 @@ public class SaveActivityActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -138,36 +137,14 @@ public class SaveActivityActivity extends AppCompatActivity {
             return false;
         }
 
-        /*File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Trawa");
-        if (!storageDir.exists()) {
-            if (!storageDir.mkdirs()) {
-                Toast.makeText(this, "Failed to create directory", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }*/
-        // do this using MediaStore
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-
-        /*String fileName = "IMG_" + System.currentTimeMillis() + ".jpg";
-        File imageFile = new File(storageDir, fileName);
-
-        try (FileOutputStream fos = new FileOutputStream(imageFile)) {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            Toast.makeText(this, "Image saved: " + imageFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
-        }*/
-        // is this necessary for earlier versions of Android?
 
         String fileName = "IMG_" + System.currentTimeMillis() + ".jpg";
         try {
             MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, fileName, "Trawa image");
-            //Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
             PhotoPath = storageDir + "/" + fileName;
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
             return false;
         }

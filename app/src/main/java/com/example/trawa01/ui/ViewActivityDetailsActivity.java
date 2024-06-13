@@ -1,7 +1,6 @@
 package com.example.trawa01.ui;
 
 import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 import android.Manifest;
 import android.app.Activity;
@@ -9,9 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -69,7 +66,7 @@ public class ViewActivityDetailsActivity extends AppCompatActivity {
         setPhoto();
     }
 
-    class MySpeedValueFormatter extends ValueFormatter {
+    static class MySpeedValueFormatter extends ValueFormatter {
         @Override
         public String getPointLabel(Entry entry) {
             return "";
@@ -113,7 +110,7 @@ public class ViewActivityDetailsActivity extends AppCompatActivity {
         }
     }
 
-    class MyAltitudeValueFormatter extends ValueFormatter {
+    static class MyAltitudeValueFormatter extends ValueFormatter {
         @Override
         public String getPointLabel(Entry entry) {
             return "";
@@ -135,9 +132,6 @@ public class ViewActivityDetailsActivity extends AppCompatActivity {
     private void fillLineCharts(){
         List<Entry> speedEntries = new ArrayList<>();
         List<Entry> altitudeEntries = new ArrayList<>();
-//        for(int i = 0; i < min(50, measurements.size()); i++){
-//            entries.add(new Entry(i,  measurements.get(i).getSpeed()));
-//        }
         int skip = max( measurements.size() / MAX_POINTS, 1);
 
         for(int i = 0; i < measurements.size(); i++){

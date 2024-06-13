@@ -2,9 +2,9 @@ package com.example.trawa01.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -17,18 +17,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 
 import java.util.List;
 
-import ViewModel.ActivityViewModel;
 import ViewModel.MeasurementViewModel;
 import model.MeasurementEntity;
 
 public class ViewActivityActivity extends AppCompatActivity implements OnMapReadyCallback {
-    private ActivityViewModel activityViewModel;
     private MeasurementViewModel measurementViewModel;
     long id;
     @Override
@@ -53,7 +50,7 @@ public class ViewActivityActivity extends AppCompatActivity implements OnMapRead
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         double minLat = Integer.MAX_VALUE;
         double maxLat = Integer.MIN_VALUE;
         double minLon = Integer.MAX_VALUE;

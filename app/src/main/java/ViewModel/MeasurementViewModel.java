@@ -11,8 +11,8 @@ import model.MeasurementEntity;
 import repo.MeasurementRepo;
 
 public class MeasurementViewModel extends AndroidViewModel {
-    private MeasurementRepo repository;
-    private LiveData<List<MeasurementEntity>> allMeasurements;
+    private final MeasurementRepo repository;
+    private final LiveData<List<MeasurementEntity>> allMeasurements;
 
     public MeasurementViewModel(Application application) {
         super(application);

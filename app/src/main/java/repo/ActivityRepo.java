@@ -10,13 +10,12 @@ import dao.ActivityDAO;
 import dao.MeasurementDAO;
 import database.AppRoomDatabase;
 import model.ActivityEntity;
-import model.MeasurementEntity;
 
 public class ActivityRepo {
-    private ActivityDAO activityDAO;
-    private MeasurementDAO measurementDAO;
+    private final ActivityDAO activityDAO;
+    private final MeasurementDAO measurementDAO;
 
-    private LiveData<List<ActivityEntity>> allActivities;
+    private final LiveData<List<ActivityEntity>> allActivities;
 
     public ActivityRepo(Application application) {
         AppRoomDatabase db = AppRoomDatabase.getDatabase(application);
@@ -30,15 +29,11 @@ public class ActivityRepo {
     }
 
     public void insert(ActivityEntity activity) {
-        AppRoomDatabase.databaseWriteExecutor.execute(() -> {
-            activityDAO.insert(activity);
-        });
+        AppRoomDatabase.databaseWriteExecutor.execute(() -> activityDAO.insert(activity));
     }
 
     public void update(ActivityEntity activity) {
-        AppRoomDatabase.databaseWriteExecutor.execute(() -> {
-            activityDAO.update(activity);
-        });
+        AppRoomDatabase.databaseWriteExecutor.execute(() -> activityDAO.update(activity));
     }
 
     public void deleteActivity(long startTime) {

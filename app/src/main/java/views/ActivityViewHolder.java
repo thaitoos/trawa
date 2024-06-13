@@ -23,7 +23,6 @@ public class ActivityViewHolder extends RecyclerView.ViewHolder{
     private final Button viewDetailsButton;
     private final Button deleteButton;
     private final ActivityViewModel activityViewModel;
-    private long id;
     private ActivityViewHolder(View itemView, ActivityViewModel activityViewModel) {
         super(itemView);
         nameItemView = itemView.findViewById(R.id.name_value);
@@ -39,11 +38,10 @@ public class ActivityViewHolder extends RecyclerView.ViewHolder{
         nameItemView.setText(name);
         distanceItemView.setText(distance);
         timeItemView.setText(time);
-        this.id = id;
 
         viewMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {;
+            public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), ViewActivityActivity.class);
                 intent.putExtra("id", id);
                 view.getContext().startActivity(intent);

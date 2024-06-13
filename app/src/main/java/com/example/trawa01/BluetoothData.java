@@ -1,5 +1,7 @@
 package com.example.trawa01;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 
 public class BluetoothData implements Serializable {
@@ -20,6 +22,7 @@ public class BluetoothData implements Serializable {
     }
 
     public BluetoothData(String data) {
+        // deserializing
         String[] split = data.split(",");
         this.DistanceRunning = Integer.parseInt(split[0]);
         this.DistanceCycling = Integer.parseInt(split[1]);
@@ -77,6 +80,7 @@ public class BluetoothData implements Serializable {
         this.totalMillis = totalMillis;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return DistanceRunning + "," + DistanceCycling + "," + DistanceWalking + "," + TimeStationary + "," + totalMeters + "," + totalMillis;

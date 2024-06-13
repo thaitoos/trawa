@@ -8,12 +8,11 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import model.ActivityEntity;
-import model.ActivityType;
 import repo.ActivityRepo;
 
 public class ActivityViewModel extends AndroidViewModel {
-    private ActivityRepo repository;
-    private LiveData<List<ActivityEntity>> allActivities;
+    private final ActivityRepo repository;
+    private final LiveData<List<ActivityEntity>> allActivities;
 
     public ActivityViewModel(Application application) {
         super(application);
