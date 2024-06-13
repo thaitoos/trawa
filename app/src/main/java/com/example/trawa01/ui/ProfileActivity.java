@@ -32,11 +32,6 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
     private LineChart lineChart1;
     private Spinner dropdown1;
     private ActivityViewModel activityViewModel;
-    private MeasurementViewModel measurementViewModel;
-    private EditText recordInput;
-    private Button checkButton;
-    private TextView recordNameText;
-    private TextView recordTimeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,24 +39,9 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         setContentView(R.layout.profile_activity);
 
         activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
-        measurementViewModel = new ViewModelProvider(this).get(MeasurementViewModel.class);
 
         lineChart1 = findViewById(R.id.line_chart1);
         dropdown1 = findViewById(R.id.dropdown1);
-
-        recordInput = findViewById(R.id.record_input);
-        checkButton = findViewById(R.id.check);
-        recordNameText = findViewById(R.id.record_name);
-        recordTimeText = findViewById(R.id.record_time);
-
-        checkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                double distance = Double.parseDouble(recordInput.getText().toString());
-                fillRecord(distance);
-            }
-        });
-
 
         initializeDropdowns();
     }
@@ -138,41 +118,12 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
 
     }
 
-    private void fillRecord(double distance){
-        /*long INF = 10000000000000000L;
-        List<MeasurementEntity> measurements = measurementViewModel.getAllMeasurementsInOrderList();
-        List<List<MeasurementEntity>> measurementsByActivity = new ArrayList<>();
-        for(MeasurementEntity measurement : measurements){
-            if(measurementsByActivity.isEmpty() ||
-                    measurementsByActivity.get(measurementsByActivity.size()-1).get(0).getActivityStartTime() != measurement.getActivityStartTime()){
-                measurementsByActivity.add(new ArrayList<>());
-            }
-            measurementsByActivity.get(measurementsByActivity.size()-1).add(measurement);
-        }
-        long BestTimeMillis = INF;
-        for(List<MeasurementEntity> measurementList : measurementsByActivity){
-            long bestgetBestTime(measurementList, distance);
-        }*/
-
-    }
-
-    /*private long getBestTime(List<MeasurementEntity> measurementList, double distance){
-        double bestTime = Double.MAX_VALUE;
-        long bestTimeMillis = 0
-        for(MeasurementEntity measurement : measurementList){
-            if(measurement.getDistance() == distance && measurement.getTime() < bestTime){
-                bestTime = measurement.getTime();
-                bestTimeMillis = measurement.getTimeMillis();
-            }
-        }
-    }*/
-
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
     private int getMonthsPassed(long startTime){
         long diff = System.currentTimeMillis() - startTime;
-        return (int) (diff / (1000L * 60 * 60 * 24 * 30)); // overflow?
+        return (int) (diff / (1000L * 60 * 60 * 24 * 30));
     }
 }

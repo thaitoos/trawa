@@ -14,38 +14,4 @@
         android:layout_width="match_parent"
         android:layout_height="400px"
         android:id="@+id/line_chart1"/>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="110px">
-
-        <TextView
-            android:layout_width="150px"
-            android:layout_height="100px"
-            android:text="Fastest" />
-
-        <EditText
-            android:layout_width="200px"
-            android:layout_height="100px"
-            android:id="@+id/record_input"/>
-
-        <TextView
-            android:layout_width="100px"
-            android:layout_height="100px"
-            android:text="km"/>
-        <Button
-            android:layout_width="250px"
-            android:layout_height="100px"
-            android:text="check"
-            android:id="@+id/check"/>
-
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="100px"
-        android:id="@+id/record_name"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="100px"
-        android:id="@+id/record_time"/>
 </LinearLayout>
