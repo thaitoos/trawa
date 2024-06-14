@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -70,7 +69,6 @@ public class NewMeasurementActivity extends AppCompatActivity {
     final LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            Log.d("Location", "Location received: " + locationResult.toString());
             Location location = locationResult.getLastLocation();
             MeasurementEntity measurement = new MeasurementEntity(location.getLatitude(), location.getLongitude(), location.getAltitude(),
                     location.getSpeed(), location.getAccuracy(), location.getTime(), activity.getStartTime(), (float)currentDistance, currentDuration);
@@ -126,7 +124,7 @@ public class NewMeasurementActivity extends AppCompatActivity {
             paceValue.setText("--:-- min/km");
             fusedLocationClient.removeLocationUpdates(locationCallback);
             measurementsSinceLastRestart.clear();
-            stopLocationUpdates();
+            startFinishingActivity();
         });
     }
 
@@ -160,10 +158,9 @@ public class NewMeasurementActivity extends AppCompatActivity {
         startButton.setEnabled(false);
     }
 
-    private void stopLocationUpdates() {
+    private void startFinishingActivity() {
         Intent intent = new Intent(NewMeasurementActivity.this, SaveActivityActivity.class);
         startActivityForResult(intent, FINISH_REQUEST_CODE);
-
     }
 
     @Override
@@ -187,6 +184,9 @@ public class NewMeasurementActivity extends AppCompatActivity {
             activityViewModel.insert(activity);
 
             finished = true;
+
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+
             finish();
         }
     }
