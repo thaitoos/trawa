@@ -10,7 +10,7 @@ import ViewModel.ActivityViewModel;
 import model.ActivityEntity;
 
 public class ActivityAdapter extends ListAdapter<ActivityEntity, ActivityViewHolder> {
-    ActivityViewModel activityViewModel;
+    final ActivityViewModel activityViewModel;
     public ActivityAdapter(@NonNull DiffUtil.ItemCallback<ActivityEntity> diffCallback, ActivityViewModel activityViewModel) {
         super(diffCallback);
         this.activityViewModel = activityViewModel;

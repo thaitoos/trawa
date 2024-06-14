@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,15 +21,12 @@ import androidx.core.content.ContextCompat;
 
 import com.example.trawa01.R;
 
-import java.io.File;
-
 import model.ActivityType;
 
 public class SaveActivityActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CAMERA_PERMISSION = 2;
-    private static final int REQUEST_STORAGE_PERMISSION = 3;
     Bitmap lastImage;
 
     EditText nameEditText;

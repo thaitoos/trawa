@@ -63,11 +63,11 @@ public class NewMeasurementActivity extends AppCompatActivity {
     private ActivityViewModel activityViewModel;
     private LocationRequest locationRequest;
     private ActivityEntity activity;
-    List<MeasurementEntity> measurementsSinceLastRestart = new ArrayList<>();
-    List<MeasurementEntity> allMeasurements = new ArrayList<>();
+    final List<MeasurementEntity> measurementsSinceLastRestart = new ArrayList<>();
+    final List<MeasurementEntity> allMeasurements = new ArrayList<>();
     private boolean finished = false;
 
-    LocationCallback locationCallback = new LocationCallback() {
+    final LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             Log.d("Location", "Location received: " + locationResult.toString());
@@ -115,7 +115,6 @@ public class NewMeasurementActivity extends AppCompatActivity {
         chart1.setNoDataText("");
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        locationRequest = LocationRequest.create();
         locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, gpsInterval)
                 .build();
 

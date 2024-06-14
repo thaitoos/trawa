@@ -6,7 +6,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -23,7 +22,6 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,27 +85,7 @@ public class ViewActivityDetailsActivity extends AppCompatActivity {
 
     private void setPhoto(){
         if(activity.getPhoto() != null){
-            /*verifyStoragePermissions(this);
-            File imgFile = new File(activity.getPhotoPath());
-            if(imgFile.exists()){
-                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                imageView.setImageBitmap(myBitmap);
-            }*/
             imageView.setImageBitmap(BitmapFactory.decodeByteArray(activity.getPhoto(), 0, activity.getPhoto().length));
-        }
-    }
-
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.MANAGE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE},
-                    REQUEST_IMAGE_OPEN
-            );
         }
     }
 
